@@ -22,18 +22,28 @@
 //  stackCalc("3 DUP +") ➞ 6
 //  stackCalc("6 5 5 7 * - /") ➞ 5
 //  stackCalc("x y +") ➞ Invalid instruction: x
+
+
 int stackCalc(String argument) {
   List<String> walkthrough = argument.split(' ').toList();
   List<int> stack = [];
 
   for (int i = 0; i < walkthrough.length; i++) {
-    if (walkthrough[i] == '+') {
-      if (stack.length >= 2) {
-        stack.add(stack.last + stack[stack.length - 2]);
-        stack.removeAt(stack.length - 2);
-        stack.removeAt(stack.length - 2);
+    if(walkthrough[i] != 'DUP' && walkthrough[i] != 'POP' && stack.length >= 2){
+      if (walkthrough[i] == '+') {
+          doOperation(stack,add);
       }
-    } else if (walkthrough[i] == 'DUP') {
+      if (walkthrough[i] == '-') {
+        doOperation(stack,subtract);
+      }
+      if (walkthrough[i] == '*') {
+        doOperation(stack,multiply);
+      }
+      if (walkthrough[i] == '/') {
+        doOperation(stack,divide);
+      }
+    }
+     else if (walkthrough[i] == 'DUP') {
       if (stack.isNotEmpty) {
         stack.add(stack.last);
       }
@@ -41,25 +51,8 @@ int stackCalc(String argument) {
       if (stack.isNotEmpty) {
         stack.removeLast();
       }
-    } else if (walkthrough[i] == '-') {
-      if (stack.length >= 2) {
-        stack.add(stack.last - stack[stack.length - 2]);
-        stack.removeAt(stack.length - 2);
-        stack.removeAt(stack.length - 2);
-      }
-    } else if (walkthrough[i] == '*') {
-      if (stack.length >= 2) {
-        stack.add(stack.last * stack[stack.length - 2]);
-        stack.removeAt(stack.length - 2);
-        stack.removeAt(stack.length - 2);
-      }
-    } else if (walkthrough[i] == '/') {
-      if (stack.length >= 2) {
-        stack.add(stack.last ~/ stack[stack.length - 2]);
-        stack.removeAt(stack.length - 2);
-        stack.removeAt(stack.length - 2);
-      }
-    } else {
+    }
+     else {
       (stack.add(int.parse(walkthrough[i])));
     }
   }
@@ -68,6 +61,29 @@ int stackCalc(String argument) {
   return stack.last;
 }
 
+add(int a,int b) {
+  return a+b;
+}
+
+subtract(int a,int b) {
+  return a-b;
+}
+
+multiply(int a,int b) {
+  return a*b;
+}
+
+divide(int a,int b) {
+  return a~/b;
+}
+
+
+void doOperation(List<int> stack,Function function) {
+  int a = stack.removeLast();
+  int b = stack.removeLast();
+
+  stack.add(function(a,b));
+}
 main() {
-  print(stackCalc("3 *"));
+  print(stackCalc("3 4 +"));
 }
